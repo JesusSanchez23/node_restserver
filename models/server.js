@@ -35,7 +35,7 @@ class Server {
 
     listen() {
         this.app.listen(this.port, () => {
-            console.log('Running', this.port);
+            console.log('Running', process.env.PORT);
 
         })
     };

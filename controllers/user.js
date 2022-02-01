@@ -77,9 +77,16 @@ const usersPatch = (req, res = response) => {
         msg: "get API Patch",
     });
 };
-const usersDelete = (req, res = response) => {
+const usersDelete = async(req, res = response) => {
+    const { id } = req.params;
+
+    // fisicamente lo borramos
+    //! Esto no se recomienda porque se pierde la integridad de los datos
+    // const usuario = await Usuario.findByIdAndDelete(id);
+
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
     res.json({
-        msg: "get API Delete",
+        usuario,
     });
 };
 

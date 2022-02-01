@@ -1,26 +1,34 @@
-const { response } = require("express");
+const { response, query } = require("express");
 const res = require("express/lib/response");
 const Usuario = require("../models/user");
 const bcryptjs = require("bcryptjs");
 
-const usersGet = async(req, res = response) => {
+//! Metodo get
+const usersGet = async(req = request, res = response) => {
     // const params = req.query;
-    const { id } = req.query;
-    const { password, google, ...resto } = req.body;
 
-    //Todo validar contra base de datos
-    if (password) {
-        // encriptar pass
-        const salt = bcryptjs.genSaltSync();
-        resto.password = bcryptjs.hashSync(password, salt);
-    }
+    // const { q, nombre = "No name", apikey, page = 1, limit } = req.query;
+    const { limite = 3, desde = 0 } = req.query;
+    const query = { estado: true };
 
-    const usuario = await Usuario.findByIdAndUpdate(id, resto);
+    // ! En este codigo trabajamos con el await pero como había dos en el código al momento de ser una aplicación real el tiempo de espera sería muchisimo, por esta razón se trabaja con promesas y no con el aync-await
+    // const usuarios = await Usuario.find(query)
+    //     .skip(Number(desde))
+    //     .limit(Number(limite));
+
+    //Te permite saber el numero de registris en una base de datos mongoDB
+    // const total = await Usuario.countDocuments(query);
+
+    const [total, usuarios] = await Promise.all([
+        Usuario.countDocuments(query),
+        Usuario.find(query).skip(Number(desde)).limit(Number(limite)),
+    ]);
 
     res.json({
-        msg: "get API controller",
-        nombre,
-        idkey,
+        total,
+        usuarios,
+        // total,
+        // usuarios,
     });
 };
 
@@ -61,10 +69,7 @@ const usersPut = async(req, res = response) => {
 
     const usuario = await Usuario.findByIdAndUpdate(id, resto);
 
-    res.json({
-        msg: "get API Putss",
-        usuario,
-    });
+    res.json(usuario);
 };
 
 const usersPatch = (req, res = response) => {

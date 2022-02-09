@@ -1,15 +1,15 @@
-const express = require('express')
-const cors = require('cors'); 
-const { dbConnection } = require('../db/config');
-require('dotenv').config();
-
+const express = require("express");
+const cors = require("cors");
+const { dbConnection } = require("../db/config");
+require("dotenv").config();
 
 class Server {
-
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
-        this.usuariosPath = '/api/usuarios';
+        this.usuariosPath = "/api/usuarios";
+        this.authPath = "/api/auth";
+
         // conectar a base de datos
         this.conectarDB();
         // middlewares
@@ -19,11 +19,11 @@ class Server {
         this.router();
     }
 
-    async conectarDB (){
+    async conectarDB() {
         await dbConnection();
     }
 
-    middlewares(){
+    middlewares() {
         // cors
 
         this.app.use(cors());
@@ -32,22 +32,19 @@ class Server {
         this.app.use(express.json());
 
         // directorio publico
-        this.app.use(express.static('public'));
+        this.app.use(express.static("public"));
     }
 
     router() {
-        this.app.use(this.usuariosPath, require('../routes/user'));
-    };
+        this.app.use(this.authPath, require("../routes/auth"));
+        this.app.use(this.usuariosPath, require("../routes/user"));
+    }
 
     listen() {
         this.app.listen(this.port, () => {
-            console.log('Running', process.env.PORT);
-
-        })
-    };
-
+            console.log("Running", process.env.PORT);
+        });
+    }
 }
-
-
 
 module.exports = Server;

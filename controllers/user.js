@@ -80,13 +80,19 @@ const usersPatch = (req, res = response) => {
 const usersDelete = async(req, res = response) => {
     const { id } = req.params;
 
+    // const uid = req.uid;
+
     // fisicamente lo borramos
     //! Esto no se recomienda porque se pierde la integridad de los datos
     // const usuario = await Usuario.findByIdAndDelete(id);
 
     const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
+
+    const usuarioAutenticado = req.usuario;
     res.json({
         usuario,
+        usuarioAutenticado,
+        // uid,
     });
 };
 
